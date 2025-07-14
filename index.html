@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice DCT-0701</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .invoice-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .invoice-emoji {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .company-info {
+            background: #f8f9fa;
+            padding: 25px;
+            border-left: 5px solid #3498db;
+        }
+
+        .company-info h2 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .info-item strong {
+            color: #2c3e50;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .invoice-details {
+            background: #e8f4f8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+        }
+
+        .invoice-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .section {
+            margin: 30px 0;
+            padding: 0 30px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            font-size: 1.5em;
+        }
+
+        .project-desc h2::before { content: '📋'; }
+        .payment-terms h2::before { content: '💳'; }
+        .timeline h2::before { content: '⏳'; }
+        .notes h2::before { content: '🔐'; }
+        .authorized h2::before { content: '👨‍💼'; }
+        .attachments h2::before { content: '🔗'; }
+
+        .services-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .services-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .services-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .services-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .services-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .total-row {
+            background: #e8f4f8 !important;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .total-amount {
+            font-size: 1.2em;
+            color: #27ae60;
+        }
+
+        .payment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .payment-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #27ae60;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .timeline-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .notes-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .notes-list li {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #f39c12;
+        }
+
+        .signature-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .signature-placeholder {
+            height: 60px;
+            background: linear-gradient(45deg, #ecf0f1, #bdc3c7);
+            margin: 15px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+
+        .attachments-list {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .attachment-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 3px solid #9b59b6;
+        }
+
+        .bill-to {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .bill-to h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .invoice-container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-table {
+                font-size: 0.9em;
+            }
+            
+            .services-table th,
+            .services-table td {
+                padding: 10px 5px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .invoice-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-container">
+        <div class="header">
+            <span class="invoice-emoji">🧾</span>
+            <h1>INVOICE</h1>
+        </div>
+
+        <div class="company-info">
+            <h2>Company Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Company Name:</strong>
+                    Dot and Cross Technology
+                </div>
+                <!-- <div class="info-item">
+                    <strong>Address:</strong>
+                    [Your Office Address]
+                </div> -->
+                <div class="info-item">
+                    <strong>Email:</strong>
+                    dotandcrosstechnology@gmail.com
+                </div>
+                <div class="info-item">
+                    <strong>Phone:</strong>
+                    +92 306 6192900
+                </div>
+                <div class="info-item">
+                    <strong>Website:</strong>
+                   <a href="https://dotandcrosstechnology.github.io/portfolio/">Visit Website</a>
+                </div>
+            </div>
+
+            <div class="invoice-details">
+                <div class="invoice-details-grid">
+                    <div>
+                        <strong>Invoice Number:</strong>
+                        DCT-0701
+                    </div>
+                    <div>
+                        <strong>Date:</strong>
+                        July 14, 2025
+                    </div>
+                    <div>
+                        <strong>Due Date:</strong>
+                        July 24, 2025
+                    </div>
+                </div>
+            </div>
+
+            <div class="bill-to">
+                <h3>Bill To:</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Client Name:</strong>
+                        Abdul wahab
+                    </div>
+                    <!-- <div class="info-item">
+                        <strong>Company:</strong>
+                        [Client's Company Name]
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        [Client's Email]
+                    </div> -->
+                </div>
+            </div>
+        </div>
+
+        <div class="section project-desc">
+            <h2>Project Description</h2>
+            <table class="services-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Service Description</th>
+                        <th>Quantity</th>
+                        <th>Unit Cost (PKR)</th>
+                        <th>Total (PKR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>E-commerce website development on WordPress</td>
+                        <td>1</td>
+                        <td>25,000</td>
+                        <td>25,000</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Product listing (30 to 50 products)</td>
+                        <td>1</td>
+                        <td>5,000</td>
+                        <td>5,000</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Online Payment Integration (PayFast)</td>
+                        <td>1</td>
+                        <td>5,000</td>
+                        <td>5,000</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Courier API Integration (e.g., Leopards Courier API)</td>
+                        <td>1</td>
+                        <td>5,000</td>
+                        <td>5,000</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="4"><strong>Total Project Cost</strong></td>
+                        <td class="total-amount"><strong>40,000</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section payment-terms">
+            <h2>Payment Terms</h2>
+            <div class="payment-grid">
+                <div class="payment-item">
+                    <strong>Advance Payment (50%):</strong><br>
+                    20,000 PKR
+                </div>
+                <div class="payment-item">
+                    <strong>Remaining Payment (after completion):</strong><br>
+                    20,000 PKR
+                </div>
+                <div class="payment-item">
+                    <strong>Payment Method:</strong><br>
+                    Bank Transfer / JazzCash / Easypaisa
+                </div>
+            </div>
+        </div>
+
+        <div class="section timeline">
+            <h2>Project Timeline</h2>
+            <div class="timeline-item">
+                <strong>Start Date:</strong> On receipt of advance payment
+            </div>
+            <div class="timeline-item">
+                <strong>Deadline:</strong> 10 days from start date
+            </div>
+            <div class="timeline-item">
+                <strong>Revisions:</strong> Up to 3 free revisions
+            </div>
+        </div>
+
+        <div class="section notes">
+            <h2>Notes</h2>
+            <div class="notes-list">
+                <ul>
+                    <li>PayFast Integration Cost based on market estimate (PKR 5,000)</li>
+                    <li>Courier API (Leopards / Call Courier / Trax) setup cost estimate (PKR 5,000 including setup + testing)</li>
+                    <li>Revisions beyond 3 will be charged separately.</li>
+                    <li>Maintenance or content update beyond scope is not included.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section authorized">
+            <h2>Authorized By:</h2>
+            <div class="signature-section">
+                <strong>Anas Yousaf</strong><br>
+                CEO – Dot and Cross Technology
+                <div class="signature-placeholder">
+                    <!-- ✍️ (Add scanned signature or use stylized digital signature here) -->
+                </div>
+            </div>
+        </div>
+
+        <div class="section attachments">
+            <h2>Attachments:</h2>
+            <div class="attachments-list">
+                <div class="attachment-item">
+                    • Terms of Service (PDF)
+                </div>
+                <div class="attachment-item">
+                    • Project Scope Document (PDF) – optional
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
